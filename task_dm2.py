@@ -1,11 +1,10 @@
 from drawman import *
 from time import sleep
 
-
 def f(x):
     return x*x
 
-print(drawman_scale)
+
 drawman_scale(100)
 x = -5.0
 to_point(x, f(x))
@@ -14,5 +13,6 @@ while x <= 5:
     to_point(x, f(x))
     x += 0.1
 pen_up()
-
+drawman_grid(True)
 sleep(10)
+drawman_origin(0,-100)

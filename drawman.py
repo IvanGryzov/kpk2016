@@ -83,27 +83,26 @@ def _draw_line(x1,y1,x2,y2):
     t.goto(x2,y2)
     t.penup()
 
-def init_drawman(x0=0,y0=0,grid_drawing=True):
-    global t, x_current, y_current,_grid_drawing,_operation
+def init_drawman(x0=0,y0=0,grid_drawing=False):
+    global t, x_current, y_current,_grid_drawing,_operation, center_x,center_y
     t = Turtle()
     t.hideturtle()
     t.speed(0)
     _operation=[]
-    drawman_scale(default_scale_x,default_scale_y)
     _grid_drawing=grid_drawing
-    if _grid_drawing:
-        _draw_grid(x0,y0)
+    center_x=x0
+    center_y=y0
+    drawman_scale(default_scale_x,default_scale_y)
     t.penup()
     x_current = x0
     y_current = y0
     t.goto(x_current, y_current)
 
-def drawmen_origin(x0=0,y0=0):
+def drawman_origin(x0=0,y0=0):
     global center_x,center_y
     center_x=x0
     center_y=y0
-    if len(_operation)>0:
-        _repaint()
+    _repaint()
 
 def drawman_scale(scale_x,scale_y=None):
     global _drawman_scale_x,_drawman_scale_y
@@ -111,8 +110,7 @@ def drawman_scale(scale_x,scale_y=None):
         scale_y=scale_x
     _drawman_scale_x = scale_x
     _drawman_scale_y = scale_y
-    if len(_operation)>0:
-        _repaint()
+    _repaint()
 
 def drawman_grid(_draw=True):
     global _grid_drawing
@@ -173,7 +171,7 @@ if __name__ == '__main__':
 
     test_drawman()
     time.sleep(3)
-    drawmen_origin(-100,-100)
+    drawman_origin(-100,-100)
     drawman_scale(5,5)
     time.sleep(3)
     drawman_grid(False)
