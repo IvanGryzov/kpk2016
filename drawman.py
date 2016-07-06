@@ -4,7 +4,7 @@ from turtle import Turtle
 # Переменные - состояние Чертежника
 # Масштаб по осям
 default_scale_x = 40
-default_scale_y = 15
+default_scale_y = 20
 _drawman_scale_x = 10
 _drawman_scale_y = 10
 
@@ -88,8 +88,6 @@ def init_drawman(x0=0,y0=0):
     t = Turtle()
     t.hideturtle()
     t.speed(0)
-
-
     drawman_scale(default_scale_x,default_scale_y)
     draw_grid(x0,y0)
     t.penup()
@@ -98,8 +96,10 @@ def init_drawman(x0=0,y0=0):
     t.goto(x_current, y_current)
 
 
-def drawman_scale(scale_x,scale_y):
+def drawman_scale(scale_x,scale_y=None):
     global _drawman_scale_x,_drawman_scale_y
+    if scale_y==None:
+        scale_y=scale_x
     _drawman_scale_x = scale_x
     _drawman_scale_y = scale_y
 
