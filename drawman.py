@@ -172,7 +172,7 @@ if __name__ == '__main__':
     test_drawman()
     time.sleep(3)
     drawman_origin(-100,-100)
-    drawman_scale(15,15)
+    drawman_scale(30,15)
     time.sleep(3)
     drawman_grid(True)
     time.sleep(5)
