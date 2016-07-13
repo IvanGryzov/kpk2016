@@ -102,8 +102,8 @@ def __draw_grid(x0=__center_x, y0=__center_y):
     for y in range(__center_y, 0, -__draftman_scale):
         main_canvas.create_line(0, y, w, y, fill="gray")
 
-    main_canvas.create_line(0, __center_y, w, __center_y, width=2, fill="black")
-    main_canvas.create_line(__center_x, 0, __center_x, h, width=2, fill="black")
+    main_canvas.create_line(0, __center_y, w, __center_y, width=2, fill="black", arrow=LAST)
+    main_canvas.create_line(__center_x, 0, __center_x, h, width=2, fill="black", arrow=FIRST)
     if __draftman_scale < 20:
         _dx = 3
     else:
