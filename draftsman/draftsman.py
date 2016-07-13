@@ -267,6 +267,8 @@ def test_drawman():
     Тестирование работы Чертёжника
     :return: None
     """
+    pen_up()
+    to_point(-30, 0)
     pen_down()
     for i in range(30):
         pen_down()
@@ -274,7 +276,7 @@ def test_drawman():
         on_vector(2, 5)
         #pen_up()
         setcolor("red")
-        on_vector(0, -5)
+        on_vector(2, -5)
     pen_up()
     to_point(0, 0)
 
