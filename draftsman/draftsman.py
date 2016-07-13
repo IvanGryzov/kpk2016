@@ -1,5 +1,24 @@
 from tkinter import *
 
+#  Copyright 2016 Ivan Gryzov <Ivan_Gryzov@mail.ru>
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#
+#
+
 # Переменные - состояние Чертежника
 # Масштаб
 __draftman_scale = 5
@@ -209,7 +228,7 @@ def init_main_window():
         c1.set(0)
     __penup = True
     __color="black"
-    main_canvas = Canvas(root, width=600, height=600, bg="lightgray", cursor="pencil")
+    main_canvas = Canvas(root, width=600, height=600, bg="white", cursor="pencil")
 
     scale1 = Scale(root, orient=HORIZONTAL, length=300, from_=5, to=100, tickinterval=10, resolution=5, variable=sc,
                    command=scale_change)
@@ -217,7 +236,7 @@ def init_main_window():
     check1 = Checkbutton(root, text="Включить/выключить оси координат", variable=c1, onvalue=1, offvalue=0,
                          command=check_change)
     scrollbar1 = Scrollbar(root)
-    text1 = Text(root, height=43, width=30,yscrollcommand = scrollbar1.set)
+    text1 = Text(root, height=43, width=30, wrap=NONE, yscrollcommand = scrollbar1.set)
     scrollbar1.config(command = text1.yview)
     main_canvas.bind("<Button>", change_00)
     __center_x, __center_y = int(main_canvas['width']) // 2, int(main_canvas['height']) // 2
@@ -251,10 +270,10 @@ def test_drawman():
     pen_down()
     for i in range(30):
         pen_down()
-        setcolor("yellow")
+        setcolor("black")
         on_vector(2, 5)
         #pen_up()
-        setcolor("blue")
+        setcolor("red")
         on_vector(0, -5)
     pen_up()
     to_point(0, 0)
