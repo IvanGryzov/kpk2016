@@ -186,7 +186,7 @@ def init_main_window():
     Начальная инициализация экрана
     :return:
     """
-    global root, main_canvas, scale1, check1, text1, c1, __center_x, __center_y, __penup, x_current, y_current
+    global root, main_canvas, scale1, check1, text1, c1, __center_x, __center_y, __penup, x_current, y_current, scrollbar1
     root = Tk()
     root.title("Чертежник")
     c1 = IntVar()
@@ -204,9 +204,9 @@ def init_main_window():
 
     check1 = Checkbutton(root, text="Включить/выключить оси координат", variable=c1, onvalue=1, offvalue=0,
                          command=check_change)
-
-    text1 = Text(root, height=43, width=30)
-
+    scrollbar1 = Scrollbar(root)
+    text1 = Text(root, height=43, width=30,yscrollcommand = scrollbar1.set)
+    scrollbar1.config(command = text1.yview)
     main_canvas.bind("<Button>", change_00)
     __center_x, __center_y = int(main_canvas['width']) // 2, int(main_canvas['height']) // 2
     x_current, y_current = 0, 0
@@ -224,6 +224,7 @@ def init_main_window():
     check1.grid(row=0, column=0)
     scale1.grid(row=0, column=2, columnspan=2)
     text1.grid(row=1, column=3)
+    scrollbar1.grid(row=1, column=4, sticky=N+S)
 
 
 def paint():
@@ -236,11 +237,11 @@ def test_drawman():
     :return: None
     """
     pen_down()
-    for i in range(5):
+    for i in range(30):
         pen_down()
-        on_vector(10, 20)
+        on_vector(2, 5)
         pen_up()
-        on_vector(0, -20)
+        on_vector(0, -5)
     pen_up()
     to_point(0, 0)
 
@@ -250,4 +251,4 @@ init_main_window()
 if __name__ == "__main__":
 
     test_drawman()
-    root.mainloop()
+    paint()
