@@ -91,16 +91,16 @@ def __draw_grid(x0=__center_x, y0=__center_y):
     main_canvas.delete("all")
 
     for x in range(__center_x, w, __draftman_scale):
-        main_canvas.create_line(x, 0, x, h, fill="gray")
+        main_canvas.create_line(x, 0, x, h, fill="gray", dash=(1,4))
 
     for x in range(__center_x, 0, -__draftman_scale):
-        main_canvas.create_line(x, 0, x, h, fill="gray")
+        main_canvas.create_line(x, 0, x, h, fill="gray", dash=(1,4))
 
     for y in range(__center_y, h, __draftman_scale):
-        main_canvas.create_line(0, y, w, y, fill="gray")
+        main_canvas.create_line(0, y, w, y, fill="gray", dash=(1,4))
 
     for y in range(__center_y, 0, -__draftman_scale):
-        main_canvas.create_line(0, y, w, y, fill="gray")
+        main_canvas.create_line(0, y, w, y, fill="gray", dash=(1,4))
 
     main_canvas.create_line(0, __center_y, w, __center_y, width=2, fill="black", arrow=LAST)
     main_canvas.create_line(__center_x, 0, __center_x, h, width=2, fill="black", arrow=FIRST)
