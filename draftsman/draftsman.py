@@ -146,7 +146,7 @@ def pen_up():
 def on_vector(dx, dy):
     global x_current, y_current, main_canvas
     _operation.append((4, dx, dy, __color))
-    text1.insert(END, "На вектор("+str(dx)+","+str(dy)+")\n")
+    text1.insert(END, "На вектор("+str(round(dx,5))+" , "+str(round(dy,5))+")\n")
     if not __penup:
         main_canvas.create_line(__center_x + __draftman_scale * x_current, __center_y - __draftman_scale * y_current,
                                 __center_x + __draftman_scale * (x_current+dx), __center_y - __draftman_scale * (y_current-dy), fill=__color)
@@ -160,7 +160,7 @@ def on_vector(dx, dy):
 def to_point(x, y):
     global x_current, y_current, main_canvas
     _operation.append((3, x, y, __color))
-    text1.insert(END, "В точку(" + str(x) + "," + str(y) + ")\n")
+    text1.insert(END, "В точку(" + str(round(x,5)) + " , " + str(round(y,5)) + ")\n")
     if not __penup:
         main_canvas.create_line(__center_x + __draftman_scale * x_current, __center_y - __draftman_scale * y_current,
                                 __center_x + __draftman_scale * x, __center_y - __draftman_scale * y, fill=__color)
