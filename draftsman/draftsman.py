@@ -12,6 +12,8 @@ __center_y = 0
 _operation = []
 # Признак поднятости пера
 __penup = True
+# текущий цвет рисования
+__color="black"
 
 
 def __repaint():
@@ -24,9 +26,9 @@ def __repaint():
     main_canvas.delete("all")
     if __grid_drawing:
         __draw_grid(__center_x, __center_y)
-
+    color="black"
     x_current, y_current = 0, 0
-    for op, x, y in _operation:
+    for op, x, y, c in _operation:
         if op==1:
             __penup = False
         elif op==2:
@@ -35,7 +37,7 @@ def __repaint():
             if not __penup:
                 main_canvas.create_line(__center_x + __draftman_scale * x_current,
                                         __center_y - __draftman_scale * y_current,
-                                        __center_x + __draftman_scale * x, __center_y - __draftman_scale * y)
+                                        __center_x + __draftman_scale * x, __center_y - __draftman_scale * y, fill=color)
             x_current = x
             y_current = y
         elif op==4:
@@ -43,9 +45,12 @@ def __repaint():
                 main_canvas.create_line(__center_x + __draftman_scale * x_current,
                                         __center_y - __draftman_scale * y_current,
                                         __center_x + __draftman_scale * (x_current + x),
-                                        __center_y - __draftman_scale * (y_current + y))
+                                        __center_y - __draftman_scale * (y_current + y), fill=color)
             x_current = x_current + x
             y_current = y_current + y
+        elif op==5:
+            color=c
+
     # print(__center_x, __center_y, __draftman_scale, __grid_drawing)
 
 
@@ -108,24 +113,24 @@ def __draw_grid(x0=__center_x, y0=__center_y):
 def pen_down():
     global __penup
     __penup = False
-    _operation.append((1, 0, 0))
-    text1.insert(END,"Pen Down\n")
+    _operation.append((1, 0, 0, 0))
+    text1.insert(END,"Опустить перо\n")
 
 
 def pen_up():
     global __penup
     __penup = True
-    _operation.append((2, 0, 0))
-    text1.insert(END, "Pen Up\n")
+    _operation.append((2, 0, 0, 0))
+    text1.insert(END, "Поднять перо\n")
 
 
 def on_vector(dx, dy):
     global x_current, y_current, main_canvas
-    _operation.append((4, dx, dy))
+    _operation.append((4, dx, dy, __color))
     text1.insert(END, "На вектор("+str(dx)+","+str(dy)+")\n")
     if not __penup:
         main_canvas.create_line(__center_x + __draftman_scale * x_current, __center_y - __draftman_scale * y_current,
-                                __center_x + __draftman_scale * (x_current+dx), __center_y - __draftman_scale * (y_current-dy))
+                                __center_x + __draftman_scale * (x_current+dx), __center_y - __draftman_scale * (y_current-dy), fill=__color)
     x_current = x_current+dx
     y_current = y_current-dy
     #print(__center_x + __draftman_scale * x_current, __center_y - __draftman_scale * y_current,
@@ -135,16 +140,22 @@ def on_vector(dx, dy):
 
 def to_point(x, y):
     global x_current, y_current, main_canvas
-    _operation.append((3, x, y))
+    _operation.append((3, x, y, __color))
     text1.insert(END, "В точку(" + str(x) + "," + str(y) + ")\n")
     if not __penup:
         main_canvas.create_line(__center_x + __draftman_scale * x_current, __center_y - __draftman_scale * y_current,
-                                __center_x + __draftman_scale * x, __center_y - __draftman_scale * y)
+                                __center_x + __draftman_scale * x, __center_y - __draftman_scale * y, fill=__color)
     x_current = x
     y_current = y
     #print(__center_x + __draftman_scale * x_current, __center_y - __draftman_scale * y_current,
     #      __center_x + __draftman_scale * x, __center_y - __draftman_scale * y)
 
+
+def setcolor(c):
+    global __color
+    __color=c
+    _operation.append((5, 0, 0, c))
+    text1.insert(END, "Цвет('"+ c +"')\n")
 
 
 def change_00(event):
@@ -186,7 +197,7 @@ def init_main_window():
     Начальная инициализация экрана
     :return:
     """
-    global root, main_canvas, scale1, check1, text1, c1, __center_x, __center_y, __penup, x_current, y_current, scrollbar1
+    global root, main_canvas, scale1, check1, text1, c1, __center_x, __center_y, __penup, x_current, y_current, scrollbar1, __color
     root = Tk()
     root.title("Чертежник")
     c1 = IntVar()
@@ -197,6 +208,7 @@ def init_main_window():
     else:
         c1.set(0)
     __penup = True
+    __color="black"
     main_canvas = Canvas(root, width=600, height=600, bg="lightgray", cursor="pencil")
 
     scale1 = Scale(root, orient=HORIZONTAL, length=300, from_=5, to=100, tickinterval=10, resolution=5, variable=sc,
@@ -239,8 +251,10 @@ def test_drawman():
     pen_down()
     for i in range(30):
         pen_down()
+        setcolor("yellow")
         on_vector(2, 5)
-        pen_up()
+        #pen_up()
+        setcolor("blue")
         on_vector(0, -5)
     pen_up()
     to_point(0, 0)
