@@ -2,21 +2,150 @@ from tkinter import *
 
 # Переменные - состояние Чертежника
 # Масштаб
-__draftman_scale=15
+__draftman_scale = 5
 # Рисовать Оси координат?
-__grid_drawing=True
+__grid_drawing = True
 # координаты центра в точках Черепахи
-__center_x=0
-__center_y=0
+__center_x = 0
+__center_y = 0
 # Список выполненных операций
-_operation=[]
+_operation = []
+# Признак поднятости пера
+__penup = True
 
-def print_status():
+
+def __repaint():
     """
     Печать статуса
     :return:
     """
-    print(__center_x, __center_y, __draftman_scale, __grid_drawing)
+    global x_current, y_current, __penup
+
+    main_canvas.delete("all")
+    if __grid_drawing:
+        __draw_grid(__center_x, __center_y)
+
+    x_current, y_current = 0, 0
+    for op, x, y in _operation:
+        if op==1:
+            __penup = False
+        elif op==2:
+            __penup = True
+        elif op==3:
+            if not __penup:
+                main_canvas.create_line(__center_x + __draftman_scale * x_current,
+                                        __center_y - __draftman_scale * y_current,
+                                        __center_x + __draftman_scale * x, __center_y - __draftman_scale * y)
+            x_current = x
+            y_current = y
+        elif op==4:
+            if not __penup:
+                main_canvas.create_line(__center_x + __draftman_scale * x_current,
+                                        __center_y - __draftman_scale * y_current,
+                                        __center_x + __draftman_scale * (x_current + x),
+                                        __center_y - __draftman_scale * (y_current + y))
+            x_current = x_current + x
+            y_current = y_current + y
+    # print(__center_x, __center_y, __draftman_scale, __grid_drawing)
+
+
+def __draw_grid(x0=__center_x, y0=__center_y):
+    """
+    Рисует оси координат
+    :param x0:
+    :param y0:
+    :return:
+    """
+    global __center_x, __center_y
+    # print(x0, y0)
+    __center_x = x0
+    __center_y = y0
+    h = int(main_canvas['height'])
+    w = int(main_canvas['width'])
+    h2 = int(h / 2)
+    w2 = int(w / 2)
+    main_canvas.delete("all")
+
+    for x in range(__center_x, w, __draftman_scale):
+        main_canvas.create_line(x, 0, x, h, fill="gray")
+
+    for x in range(__center_x, 0, -__draftman_scale):
+        main_canvas.create_line(x, 0, x, h, fill="gray")
+
+    for y in range(__center_y, h, __draftman_scale):
+        main_canvas.create_line(0, y, w, y, fill="gray")
+
+    for y in range(__center_y, 0, -__draftman_scale):
+        main_canvas.create_line(0, y, w, y, fill="gray")
+
+    main_canvas.create_line(0, __center_y, w, __center_y, width=2, fill="black")
+    main_canvas.create_line(__center_x, 0, __center_x, h, width=2, fill="black")
+    if __draftman_scale < 20:
+        _dx = 3
+    else:
+        _dx = 1
+
+    xx = 0
+    for x in range(__center_x, w, __draftman_scale * _dx):
+        main_canvas.create_text(x + 7, __center_y + 7, text=str(xx), font="Verdana 8")
+        xx += _dx
+    xx = 0
+    for x in range(__center_x, 0, -__draftman_scale * _dx):
+        main_canvas.create_text(x + 7, __center_y + 7, text=str(xx), font="Verdana 8")
+        xx -= _dx
+
+    yy = 0
+    for y in range(__center_y, h, __draftman_scale * _dx):
+        main_canvas.create_text(__center_x + 7, y + 7, text=str(-yy), font="Verdana 8")
+        yy += _dx
+
+    yy = 0
+    for y in range(__center_y, 0, -__draftman_scale * _dx):
+        main_canvas.create_text(__center_x + 7, y + 7, text=str(-yy), font="Verdana 8")
+        yy -= _dx
+
+
+def pen_down():
+    global __penup
+    __penup = False
+    _operation.append((1, 0, 0))
+    text1.insert(END,"Pen Down\n")
+
+
+def pen_up():
+    global __penup
+    __penup = True
+    _operation.append((2, 0, 0))
+    text1.insert(END, "Pen Up\n")
+
+
+def on_vector(dx, dy):
+    global x_current, y_current, main_canvas
+    _operation.append((4, dx, dy))
+    text1.insert(END, "На вектор("+str(dx)+","+str(dy)+")\n")
+    if not __penup:
+        main_canvas.create_line(__center_x + __draftman_scale * x_current, __center_y - __draftman_scale * y_current,
+                                __center_x + __draftman_scale * (x_current+dx), __center_y - __draftman_scale * (y_current-dy))
+    x_current = x_current+dx
+    y_current = y_current-dy
+    #print(__center_x + __draftman_scale * x_current, __center_y - __draftman_scale * y_current,
+    #                            __center_x + __draftman_scale * (x_current+dx), __center_y - __draftman_scale * (y_current-dy))
+
+
+
+def to_point(x, y):
+    global x_current, y_current, main_canvas
+    _operation.append((3, x, y))
+    text1.insert(END, "В точку(" + str(x) + "," + str(y) + ")\n")
+    if not __penup:
+        main_canvas.create_line(__center_x + __draftman_scale * x_current, __center_y - __draftman_scale * y_current,
+                                __center_x + __draftman_scale * x, __center_y - __draftman_scale * y)
+    x_current = x
+    y_current = y
+    #print(__center_x + __draftman_scale * x_current, __center_y - __draftman_scale * y_current,
+    #      __center_x + __draftman_scale * x, __center_y - __draftman_scale * y)
+
+
 
 def change_00(event):
     """
@@ -24,10 +153,10 @@ def change_00(event):
     :param event:
     :return: None
     """
-    global __center_x,  __center_y
+    global __center_x, __center_y
     __center_x = event.x
     __center_y = event.y
-    print_status()
+    __repaint()
 
 
 def scale_change(self):
@@ -37,8 +166,8 @@ def scale_change(self):
     :return:
     """
     global __draftman_scale
-    __draftman_scale =scale1.get()
-    print_status()
+    __draftman_scale = scale1.get()
+    __repaint()
 
 
 def check_change():
@@ -48,8 +177,8 @@ def check_change():
     :return:
     """
     global __grid_drawing
-    __grid_drawing= c1.get() == 1
-    print_status()
+    __grid_drawing = c1.get() == 1
+    __repaint()
 
 
 def init_main_window():
@@ -57,7 +186,7 @@ def init_main_window():
     Начальная инициализация экрана
     :return:
     """
-    global root, main_canvas, scale1, check1, text1, c1, __center_x,  __center_y
+    global root, main_canvas, scale1, check1, text1, c1, __center_x, __center_y, __penup, x_current, y_current
     root = Tk()
     root.title("Чертежник")
     c1 = IntVar()
@@ -67,7 +196,8 @@ def init_main_window():
         c1.set(1)
     else:
         c1.set(0)
-    main_canvas = Canvas(root, width=600, height=600, bg="lightblue", cursor="pencil")
+    __penup = True
+    main_canvas = Canvas(root, width=600, height=600, bg="lightgray", cursor="pencil")
 
     scale1 = Scale(root, orient=HORIZONTAL, length=300, from_=5, to=100, tickinterval=10, resolution=5, variable=sc,
                    command=scale_change)
@@ -78,7 +208,8 @@ def init_main_window():
     text1 = Text(root, height=43, width=30)
 
     main_canvas.bind("<Button>", change_00)
-    __center_x, __center_y= int(main_canvas['width']) / 2, int(main_canvas['width']) / 2
+    __center_x, __center_y = int(main_canvas['width']) // 2, int(main_canvas['height']) // 2
+    x_current, y_current = 0, 0
 
     """
       0   1   2   3
@@ -95,6 +226,28 @@ def init_main_window():
     text1.grid(row=1, column=3)
 
 
+def paint():
+    root.mainloop()
+
+
+def test_drawman():
+    """
+    Тестирование работы Чертёжника
+    :return: None
+    """
+    pen_down()
+    for i in range(5):
+        pen_down()
+        on_vector(10, 20)
+        pen_up()
+        on_vector(0, -20)
+    pen_up()
+    to_point(0, 0)
+
+
+init_main_window()
+
 if __name__ == "__main__":
-    init_main_window()
+
+    test_drawman()
     root.mainloop()
