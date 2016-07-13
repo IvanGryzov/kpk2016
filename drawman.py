@@ -9,15 +9,15 @@ _drawman_scale_x = 10
 _drawman_scale_y = 10
 
 # координаты центра в точках Черепахи
-center_x=0
-center_y=0
+__center_x=0
+__center_y=0
 # Рисовать Оси координат?
-_grid_drawing=True
+__grid_drawing=False
 # Список выполненных операций
 _operation=[]
 
-def _draw_grid(x0=center_x,y0=center_y):
-    global center_x,center_y
+def _draw_grid(x0=__center_x, y0=__center_y):
+    global __center_x,__center_y
     center_x=x0
     center_y=y0
     t.speed(0)
@@ -84,7 +84,7 @@ def _draw_line(x1,y1,x2,y2):
     t.penup()
 
 def init_drawman(x0=0,y0=0,grid_drawing=False):
-    global t, x_current, y_current,_grid_drawing,_operation, center_x,center_y
+    global t, x_current, y_current,__grid_drawing,_operation, __center_x,__center_y
     t = Turtle()
     t.hideturtle()
     t.speed(0)
@@ -99,7 +99,7 @@ def init_drawman(x0=0,y0=0,grid_drawing=False):
     t.goto(x_current, y_current)
 
 def drawman_origin(x0=0,y0=0):
-    global center_x,center_y
+    global __center_x,__center_y
     center_x=x0
     center_y=y0
     _repaint()
@@ -113,9 +113,9 @@ def drawman_scale(scale_x,scale_y=None):
     _repaint()
 
 def drawman_grid(_draw=True):
-    global _grid_drawing
-    if _grid_drawing!=_draw:
-        _grid_drawing=_draw
+    global __grid_drawing
+    if __grid_drawing!=_draw:
+        __grid_drawing=_draw
         _repaint()
 
 def test_drawman():
@@ -147,21 +147,21 @@ def to_point(x, y):
     x_current = x
     y_current = y
     _operation.append((3,x,y))
-    t.goto(center_x+_drawman_scale_x*x_current, center_y+_drawman_scale_y*y_current)
+    t.goto(__center_x + _drawman_scale_x * x_current, __center_y + _drawman_scale_y * y_current)
 
 def _repaint():
     t.clear()
     t.penup()
-    if _grid_drawing:
-        _draw_grid(center_x,center_y)
-    t.goto(center_x,center_y)
+    if __grid_drawing:
+        _draw_grid(__center_x, __center_y)
+    t.goto(__center_x, __center_y)
     for op,x,y in _operation:
         if op==1:
             t.pendown()
         elif op==2:
             t.penup()
         else:
-            t.goto(center_x+_drawman_scale_x*x, center_y+_drawman_scale_y*y)
+            t.goto(__center_x + _drawman_scale_x * x, __center_y + _drawman_scale_y * y)
 
 
 init_drawman()
