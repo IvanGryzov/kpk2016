@@ -42,7 +42,8 @@ def create_random_ball():
     R = randint(ball_minimal_radius, ball_maximal_radius)
     x = randint(0, int(canvas['width'])-1-2*R)
     y = randint(0, int(canvas['height'])-1-2*R)
-    canvas.create_oval(x, y, x+2*R, y+2*R, width=1, fill=random_color())
+    fillcolor=random_color()
+    canvas.create_oval(x, y, x+2*R, y+2*R, width=1, fill=fillcolor, outline=fillcolor)
 
 
 def random_color():
