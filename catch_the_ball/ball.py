@@ -32,10 +32,19 @@ def click_ball(event):
 def move_all_balls(event):
     """ передвигает все шарики на чуть-чуть
     """
+    k = 0
     for obj in canvas.find_all():
-        dx = randint(-1, 1)
-        dy = randint(-1, 1)
-        canvas.move(obj, dx, dy)
+        #dx = randint(-1, 1)
+        #dy = randint(-1, 1)
+        h = int(canvas['height'])
+        w = int(canvas['width'])
+        x1, y1, x2, y2 = canvas.coords(obj)
+        if x1<3 or x2>w-3:
+            v[k][0]=-v[k][0]
+        if y1 < 3 or y2>h-3:
+            v[k][1] = -v[k][1]
+        canvas.move(obj, v[k][0],v[k][1])
+        k+=1
 
 
 def create_random_ball():
@@ -61,16 +70,24 @@ def init_ball_catch_game():
     """
     Создаём необходимое для игры количество шариков, по которым нужно будет кликать.
     """
+    global v
+    v=[]
     for i in range(ball_initial_number):
+        vx = randint(-1, 1)
+        vy = randint(-1, 1)
+        while vx==0 and vy==0:
+            vx = randint(-1, 1)
+            vy = randint(-1, 1)
+        v.append([vx,vy])
         create_random_ball()
 
 
 def init_main_window():
-    global root, canvas, text1, score
+    global root, canvas, text1, score, v
 
     root = Tk()
     root.title("Поймай шарик")
-
+    v=[]
     score=IntVar()
     canvas = Canvas(root, width=600, height=600, bg="white", cursor="pencil")
     text1 = Entry(root, textvariable=score)
