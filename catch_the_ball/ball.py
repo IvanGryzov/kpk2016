@@ -8,7 +8,10 @@ ball_available_colors = ['green', 'blue', 'red', 'lightgray', '#FF00FF', '#FFFF0
 
 
 def start_command():
-    pass
+    global score
+    score.set(0)
+    canvas.delete("all")
+    init_ball_catch_game()
 
 
 def click_ball(event):
@@ -22,7 +25,7 @@ def click_ball(event):
 
     if x1 <= event.x <= x2 and y1 <= event.y <= y2:
         canvas.delete(obj)
-        # FIXME: нужно учесть объект в очках
+        score.set(score.get()+1)
         create_random_ball()
 
 
@@ -33,6 +36,7 @@ def move_all_balls(event):
         dx = randint(-1, 1)
         dy = randint(-1, 1)
         canvas.move(obj, dx, dy)
+
 
 def create_random_ball():
     """
@@ -60,15 +64,17 @@ def init_ball_catch_game():
     for i in range(ball_initial_number):
         create_random_ball()
 
+
 def init_main_window():
-    global root, canvas
+    global root, canvas, text1, score
 
     root = Tk()
     root.title("Поймай шарик")
 
+    score=IntVar()
     canvas = Canvas(root, width=600, height=600, bg="white", cursor="pencil")
-    text1 = Text(root, height=1, width=6, wrap=NONE)
-    button1 = Button(root, text="Button 1", command=start_command)
+    text1 = Entry(root, textvariable=score)
+    button1 = Button(root, text="Start game", command=start_command)
 
     #button2 = Button(root, text="Button 2", command=reset_command)
     #button1.bind("<Button>", print_hello)
@@ -78,28 +84,6 @@ def init_main_window():
     canvas.grid(row=1, column=0, columnspan=3)
     button1.grid(row=0, column=0)
     text1.grid(row=0, column=2)
-    """
-
-    scale1 = Scale(root, orient=HORIZONTAL, length=300, from_=5, to=100, tickinterval=10, resolution=5, variable=sc,
-                   command=scale_change)
-
-    check1 = Checkbutton(root, text="Включить/выключить оси координат", variable=c1, onvalue=1, offvalue=0,
-                         command=check_change)
-    scrollbar1 = Scrollbar(root)
-
-    scrollbar1.config(command = text1.yview)
-    main_canvas.bind("<Button>", change_00)
-    __center_x, __center_y = int(main_canvas['width']) // 2, int(main_canvas['height']) // 2
-    x_current, y_current = 0, 0
-
-
-    main_canvas.grid(row=1, column=0, columnspan=3)
-    check1.grid(row=0, column=0)
-    scale1.grid(row=0, column=2, columnspan=2)
-    text1.grid(row=1, column=3)
-    scrollbar1.grid(row=1, column=4, sticky=N+S)
-    """
-
 
 
 if __name__ == "__main__":
