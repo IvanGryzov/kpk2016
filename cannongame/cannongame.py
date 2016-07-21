@@ -89,24 +89,68 @@ class Target(Ball):
         super().move_ball()
 
 
-def do_shoot():
+class Shell(Ball):
+    """
+
+    """
+    def __init__(self, x=0, y=300, vx=1, vy=-1):
+        """
+        Создает снаряд с зщаданными параметрами
+        :param x: координата x
+        :param y: координата y
+        :param vx: скорость по x
+        :param vy: скорость по y
+        """
+        super().__init__(x, y, 3, vx, vy, color='black', a=0.002)
+
+    def move_shell(self):
+        """
+        Перемещает снаряд Движение равноускоренное Перемещение останавливается по достижении пола
+
+        :return:
+        """
+        h = int(canvas['height'])
+        if self._y < h:
+            self.move_ball()
+
+
+def do_shoot(event):
     pass
 
 
 def init_game():
-    global targets, gun, shells
+    """
+    Установка начальных параметров игры
+    :return:
+    """
+    global targets, gun, shells, num_of_targets
+
     targets = [Target() for i in range(num_of_targets)]
+    shells=Shell()
 
 
 def start_game():
     pass
 
 
+def take_aim():
+    """
+    Изменяет наколон пушки
+    :return:
+    """
+    pass
+
+
 def timer_event():
-    # все периодические рассчёты, которые я хочу, делаю здесь
+    """
+    Управление периодическими действиями
+    :return:
+    """
     for target in targets:
-        target._a = 0.001
+        target._a = 0.01
         target.move_target()
+    shells.move_shell()
+    # find_overlapping (x1, y1, x2, y2)
     canvas.after(timer_delay, timer_event)
 
 
@@ -121,13 +165,13 @@ def init_main_window():
     root.title("Cannon Game")
     # создаем элементы управления
     score_value = IntVar()
-    canvas = Canvas(root, width=600, height=400, bg="white", cursor="pencil")
+    canvas = Canvas(root, width=600, height=400, bg="white", cursor="cross")
     score_text = Entry(root, textvariable=score_value)
     button1 = Button(root, text="Start game", command=start_game)
     # привязка событий
 
     canvas.bind("<Button>", do_shoot)
-    # canvas.bind("<Motion>", move_all_balls)
+    # canvas.bind("<Motion>", take_aim)
     # Создание геометрии
     canvas.grid(row=1, column=0, columnspan=3)
     button1.grid(row=0, column=0)
