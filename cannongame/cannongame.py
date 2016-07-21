@@ -10,7 +10,7 @@ class Ball:
     """
     класс - родитель для мишеней и снарядов
     """
-    def __init__(self, x=0, y=0, r=10, vx=1, vy=0, color='red'):
+    def __init__(self, x=0, y=0, r=10, vx=1, vy=0, color='red', a=0):
         """
         Коструктор класса - родителя создает шарик с заданными параметрами
         :param x: координата по x
@@ -25,7 +25,7 @@ class Ball:
         self._vx = vx
         self._vy = vy
         self._color = color
-        self._a = 0 # ускорение
+        self._a = a # ускорение
 
         self._picture = canvas.create_oval(x, y, x + 2 * r, y + 2 * r, width=1, fill=color,outline=color)
 
@@ -92,10 +92,10 @@ def do_shoot():
 
 
 def init_game():
-    global a, b
-    a= Target()
-    a._a = 0.01
-    b = Target()
+    global targets, gun, shells
+    targets = [Target() for i in range(num_of_targets)]
+
+
     pass
 
 
@@ -104,8 +104,9 @@ def start_game():
 
 def timer_event():
     # все периодические рассчёты, которые я хочу, делаю здесь
-    a.move_target()
-    b.move_target()
+    for target in targets:
+        target._a=0.001
+        target.move_target()
     canvas.after(timer_delay, timer_event)
 
 
