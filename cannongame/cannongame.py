@@ -25,17 +25,19 @@ class Ball:
         self._vx = vx
         self._vy = vy
         self._color = color
+        self._a = 0 # ускорение
 
         self._picture = canvas.create_oval(x, y, x + 2 * r, y + 2 * r, width=1, fill=color,outline=color)
 
     def move_ball(self):
         """
-        перемещает шарик без контроля выхода за экран !!!
+        перемещает шарик без контроля выхода за экран !!! движение равноускоренное _a - ускорение
         :return: None
         """
         canvas.move(self._picture, self._vx, self._vy)
         self._x += self._vx
-        self._y += self._vy
+        self._y += self._vy + self._a/2
+        self._vy += self._a
 
     def delete_ball(self):
         """
@@ -92,6 +94,7 @@ def do_shoot():
 def init_game():
     global a, b
     a= Target()
+    a._a = 0.01
     b = Target()
     pass
 
@@ -102,7 +105,7 @@ def start_game():
 def timer_event():
     # все периодические рассчёты, которые я хочу, делаю здесь
     a.move_target()
-    b.move_ball()
+    b.move_target()
     canvas.after(timer_delay, timer_event)
 
 
