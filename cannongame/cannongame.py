@@ -158,6 +158,7 @@ def do_shoot(event):
     shell = Shell(x=cannon._x0 + cannon._dx, y=cannon._y0 + cannon._dy - 3,
                   vx=cannon._dx / cannon.cannon_length, vy=cannon._dy / cannon.cannon_length)
     shells.append(shell)
+    shells_count.set(shells_count.get()+1)
 
 
 def init_game():
@@ -173,7 +174,10 @@ def init_game():
 
 
 def start_game():
-    pass
+    canvas.delete("all")
+    score_value.set(0)
+    shells_count.set(0)
+    init_game()
 
 
 def take_aim(event):
@@ -230,14 +234,16 @@ def init_main_window():
     Создает окно и элементы упраления
     :return:
     """
-    global root, canvas, score_text, score_value
+    global root, canvas, score_text, score_value, shells_count
 
     root = Tk()
     root.title("Cannon Game")
     # создаем элементы управления
     score_value = IntVar()
+    shells_count = IntVar()
     canvas = Canvas(root, width=600, height=400, bg="white", cursor="target")
     score_text = Entry(root, textvariable=score_value)
+    shells_count_text = Entry(root, textvariable=shells_count)
     button1 = Button(root, text="Start game", command=start_game)
     # привязка событий
 
@@ -246,7 +252,8 @@ def init_main_window():
     # Создание геометрии
     canvas.grid(row=1, column=0, columnspan=3)
     button1.grid(row=0, column=0)
-    score_text.grid(row=0, column=2)
+    score_text.grid(row=0, column=1)
+    shells_count_text.grid(row=0, column=2)
 
 
 if __name__ == "__main__":
