@@ -1,5 +1,6 @@
 from tkinter import *
 from random import choice, randint
+from math import sqrt
 
 # Глобальные константы
 timer_delay = 10  # Время между изменениями обстановки в миллисекундах
@@ -11,7 +12,7 @@ class Ball:
     класс - родитель для мишеней и снарядов
     """
 
-    def __init__(self, x=0, y=0, r=10, vx=1, vy=0, color='red', a=0):
+    def __init__(self, x=0, y=0, r=10, vx=1, vy=0, color='red', a=0.0):
         """
         Коструктор класса - родителя создает шарик с заданными параметрами
         :param x: координата по x
@@ -55,7 +56,7 @@ class Target(Ball):
     minimal_radius = 6  # Минимальный радиус мишени
     maximal_radius = 20  # Максимальный радиус мишени
     available_colors = ['green', 'blue', 'red', 'yellow', 'gray']  # Доступные цвета
-    __xmin = 20
+    __xmin = 60
     __ymin = 0
 
     def __init__(self):
@@ -91,8 +92,9 @@ class Target(Ball):
 
 class Shell(Ball):
     """
-
+    Класс Снаряд на базе класса Шарик
     """
+
     def __init__(self, x=0, y=300, vx=1, vy=-1):
         """
         Создает снаряд с зщаданными параметрами
@@ -101,21 +103,61 @@ class Shell(Ball):
         :param vx: скорость по x
         :param vy: скорость по y
         """
-        super().__init__(x, y, 3, vx, vy, color='black', a=0.002)
+        super().__init__(x, y, 3, vx, vy, color='black', a=0.001)
 
     def move_shell(self):
         """
         Перемещает снаряд Движение равноускоренное Перемещение останавливается по достижении пола
 
-        :return:
+        :return: True - достигли пола False -нет
         """
         h = int(canvas['height'])
         if self._y < h:
             self.move_ball()
+            return False
+        else:
+            return True
+
+
+class Cannon:
+    """
+    Класс - реализующий Пушку
+    """
+    cannon_length = 50
+
+    def __init__(self):
+        """
+        Пушка расположена в левом нижнем углу canvas
+        """
+        # Координаты неподвижной точки пушки
+        self._x0 = 0
+        self._y0 = int(canvas['height'])
+        # Координаты конца ствола пушки
+        self._dx = +30
+        self._dy = -30
+        self._picture = canvas.create_line(self._x0, self._y0, self._x0 + self._dx, self._y0 + self._dy, width=8)
+
+    def move_gun_barrel(self, x, y):
+        """
+        поворот ствола пушки в направлении вектора x,y
+        :param x: Координата точки -курсора x
+        :param y: Координата точки -курсора y
+        :return: None
+        """
+        length = sqrt((x - self._x0) ** 2 + (y - self._y0) ** 2)
+        self._dx = (x - self._x0) * self.cannon_length / length
+        self._dy = (y - self._y0) * self.cannon_length / length
+        canvas.coords(self._picture, self._x0, self._y0, self._x0 + self._dx, self._y0 + self._dy)
 
 
 def do_shoot(event):
-    pass
+    """
+    Делает выстрел
+    :return: None
+    """
+    shell = Shell(x=cannon._x0 + cannon._dx, y=cannon._y0 + cannon._dy - 3,
+                  vx=cannon._dx / cannon.cannon_length, vy=cannon._dy / cannon.cannon_length)
+    shells.append(shell)
 
 
 def init_game():
@@ -123,22 +165,23 @@ def init_game():
     Установка начальных параметров игры
     :return:
     """
-    global targets, gun, shells, num_of_targets
+    global targets, gun, shells, num_of_targets, cannon
 
     targets = [Target() for i in range(num_of_targets)]
-    shells=Shell()
+    cannon = Cannon()
+    shells = []
 
 
 def start_game():
     pass
 
 
-def take_aim():
+def take_aim(event):
     """
     Изменяет наколон пушки
-    :return:
+    :return: None
     """
-    pass
+    cannon.move_gun_barrel(event.x, event.y)
 
 
 def timer_event():
@@ -146,11 +189,39 @@ def timer_event():
     Управление периодическими действиями
     :return:
     """
+    global score_value
     for target in targets:
-        target._a = 0.01
+        # target._a = 0.01
         target.move_target()
-    shells.move_shell()
-    # find_overlapping (x1, y1, x2, y2)
+    deleted_shells = []  # Составляем список всех снарядов упавших на пол
+    for shell in shells:
+        if shell.move_shell():
+            deleted_shells.append(shell)
+    # удаление все снарядов упавших на пол
+    for shell in deleted_shells:
+        shell.delete_ball()
+        shells.remove(shell)
+
+    deleted_shells = []
+    deleted_targets = []
+    for shell in shells:
+        x1, y1, x2, y2 = canvas.coords(shell._picture)
+        obj_set = set(canvas.find_overlapping(x1, y1, x2, y2))
+        if not cannon._picture in obj_set:
+            if len(obj_set) > 1:
+                deleted_shells.append(shell)
+                for target in targets:
+                    if target._picture in obj_set:
+                        deleted_targets.append(target)
+    # Удаляем все объекты и их изображения помеченные как столкнувшиеся
+    for shell in deleted_shells:
+        shell.delete_ball()
+        shells.remove(shell)
+    for target in deleted_targets:
+        target.delete_ball()
+        score_value.set(score_value.get() + 1)
+        targets.remove(target)
+
     canvas.after(timer_delay, timer_event)
 
 
@@ -165,13 +236,13 @@ def init_main_window():
     root.title("Cannon Game")
     # создаем элементы управления
     score_value = IntVar()
-    canvas = Canvas(root, width=600, height=400, bg="white", cursor="cross")
+    canvas = Canvas(root, width=600, height=400, bg="white", cursor="target")
     score_text = Entry(root, textvariable=score_value)
     button1 = Button(root, text="Start game", command=start_game)
     # привязка событий
 
     canvas.bind("<Button>", do_shoot)
-    # canvas.bind("<Motion>", take_aim)
+    canvas.bind("<Motion>", take_aim)
     # Создание геометрии
     canvas.grid(row=1, column=0, columnspan=3)
     button1.grid(row=0, column=0)
