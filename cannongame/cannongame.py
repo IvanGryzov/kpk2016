@@ -5,7 +5,7 @@ from math import sqrt
 # Глобальные константы
 timer_delay = 10  # Время между изменениями обстановки в миллисекундах
 num_of_targets = 20  # Число мишеней
-acceleration = 0.001
+acceleration = 0.003
 
 
 class Ball:
@@ -206,7 +206,7 @@ def timer_event():
     for shell in deleted_shells:
         shell.delete_ball()
         shells.remove(shell)
-
+    # Определение столкновений
     deleted_shells = []
     deleted_targets = []
     for shell in shells:
@@ -225,7 +225,10 @@ def timer_event():
     for target in deleted_targets:
         target.delete_ball()
         score_value.set(score_value.get() + 1)  # Еще одну мишень уничтожили
-        targets.remove(target)
+        try:
+            targets.remove(target)
+        except ValueError:
+            print("Непонятная ошибка")
 
     canvas.after(timer_delay, timer_event)
 
