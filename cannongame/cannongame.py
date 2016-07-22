@@ -5,6 +5,7 @@ from math import sqrt
 # Глобальные константы
 timer_delay = 10  # Время между изменениями обстановки в миллисекундах
 num_of_targets = 20  # Число мишеней
+acceleration = 0.001
 
 
 class Ball:
@@ -103,7 +104,7 @@ class Shell(Ball):
         :param vx: скорость по x
         :param vy: скорость по y
         """
-        super().__init__(x, y, 3, vx, vy, color='black', a=0.001)
+        super().__init__(x, y, 3, vx, vy, color='black', a=acceleration)
 
     def move_shell(self):
         """
@@ -195,7 +196,7 @@ def timer_event():
     """
     global score_value
     for target in targets:
-        # target._a = 0.01
+        target._a = acceleration
         target.move_target()
     deleted_shells = []  # Составляем список всех снарядов упавших на пол
     for shell in shells:
@@ -245,15 +246,19 @@ def init_main_window():
     score_text = Entry(root, textvariable=score_value)
     shells_count_text = Entry(root, textvariable=shells_count)
     button1 = Button(root, text="Start game", command=start_game)
+    label1 = Label(root, text="Мишени", font="Arial 12")
+    label2 = Label(root, text="Снаряды", font="Arial 12")
     # привязка событий
 
     canvas.bind("<Button>", do_shoot)
     canvas.bind("<Motion>", take_aim)
     # Создание геометрии
-    canvas.grid(row=1, column=0, columnspan=3)
+    canvas.grid(row=1, column=0, columnspan=5)
     button1.grid(row=0, column=0)
-    score_text.grid(row=0, column=1)
-    shells_count_text.grid(row=0, column=2)
+    label1.grid(row=0, column=1)
+    score_text.grid(row=0, column=2)
+    label2.grid(row=0, column=3)
+    shells_count_text.grid(row=0, column=4)
 
 
 if __name__ == "__main__":
