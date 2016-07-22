@@ -53,8 +53,8 @@ class Target(Ball):
     """
     Класс для мишени построен на основе класса Шарик
     """
-    minimal_radius = 6  # Минимальный радиус мишени
-    maximal_radius = 20  # Максимальный радиус мишени
+    minimal_radius = 8  # Минимальный радиус мишени
+    maximal_radius = 30  # Максимальный радиус мишени
     available_colors = ['green', 'blue', 'red', 'yellow', 'gray']  # Доступные цвета
     __xmin = 60
     __ymin = 0
@@ -144,8 +144,8 @@ class Cannon:
         :param y: Координата точки -курсора y
         :return: None
         """
-        length = sqrt((x - self._x0) ** 2 + (y - self._y0) ** 2)
-        self._dx = (x - self._x0) * self.cannon_length / length
+        length = sqrt((x - self._x0) ** 2 + (y - self._y0) ** 2)  # длина вектора до курсора мыши
+        self._dx = (x - self._x0) * self.cannon_length / length  # Нормируем вектор и умножаем на длину ствола
         self._dy = (y - self._y0) * self.cannon_length / length
         canvas.coords(self._picture, self._x0, self._y0, self._x0 + self._dx, self._y0 + self._dy)
 
@@ -158,7 +158,7 @@ def do_shoot(event):
     shell = Shell(x=cannon._x0 + cannon._dx, y=cannon._y0 + cannon._dy - 3,
                   vx=cannon._dx / cannon.cannon_length, vy=cannon._dy / cannon.cannon_length)
     shells.append(shell)
-    shells_count.set(shells_count.get()+1)
+    shells_count.set(shells_count.get() + 1)  # Еще один снаряд выпустили
 
 
 def init_game():
@@ -211,19 +211,19 @@ def timer_event():
     for shell in shells:
         x1, y1, x2, y2 = canvas.coords(shell._picture)
         obj_set = set(canvas.find_overlapping(x1, y1, x2, y2))
-        if not cannon._picture in obj_set:
-            if len(obj_set) > 1:
-                deleted_shells.append(shell)
-                for target in targets:
-                    if target._picture in obj_set:
-                        deleted_targets.append(target)
-    # Удаляем все объекты и их изображения помеченные как столкнувшиеся
+        if cannon._picture not in obj_set and len(obj_set) > 1:
+            # Пушки в списке нет? и  Список содержит кроме снаряда что-то еще
+            deleted_shells.append(shell)  # Снаряд больше не нужен
+            for target in targets:
+                if target._picture in obj_set:
+                    deleted_targets.append(target)  # Помечаем мишень как уничтоженную
+                # Удаляем все объекты и их изображения помеченные как столкнувшиеся
     for shell in deleted_shells:
         shell.delete_ball()
         shells.remove(shell)
     for target in deleted_targets:
         target.delete_ball()
-        score_value.set(score_value.get() + 1)
+        score_value.set(score_value.get() + 1)  # Еще одну мишень уничтожили
         targets.remove(target)
 
     canvas.after(timer_delay, timer_event)
