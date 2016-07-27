@@ -127,9 +127,6 @@ def change_cell(event):
     canvas.itemconfig(screen[x][y], fill=colors[cells[x][y]])
 
 
-# repaint_all()
-
-
 def init_life_game():
     """
     Начальная инициализация игры
