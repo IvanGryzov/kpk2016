@@ -32,10 +32,18 @@ size_of_cell = 20
 
 
 def quit_apps():
+    """
+    Обеспечивает выхов из программы
+    :return:
+    """
     root.destroy()
 
 
 def load_file():
+    """
+    Загружает файлт с конфигурацией Используется модуль pickle
+    :return:
+    """
     global cells
     file_name = FileDialog.Open(root, filetypes=[('*.life files', '.life')]).show()
     if file_name == '':
@@ -49,6 +57,10 @@ def load_file():
 
 
 def save_file():
+    """
+    Сохраняет файл с конфигурацией Используется модуль pickle
+    :return:
+    """
     file_name = FileDialog.SaveAs(root, filetypes=[('*.life files', '.life')]).show()
     if file_name == '':
         return
@@ -60,24 +72,44 @@ def save_file():
 
 
 def play_step():
+    """
+    Выподняет один шаг игры
+    :return:
+    """
     pass
 
 
 def play():
+    """
+    Запускает непрерывный процесс эволюции клеток
+    :return:
+    """
     pass
 
 
 def stop():
+    """
+    Останавливает эволючию клеток
+    :return:
+    """
     pass
 
 
 def repaint_all():
+    """
+    Перересовывыет все клетки
+    :return:
+    """
     for x in range(nun_of_cells):
         for y in range(nun_of_cells):
             canvas.itemconfig(screen[x][y], fill=colors[cells[x][y]])
 
 
 def clear_cells():
+    """
+    Очищает все поле и перерисовывает клетки
+    :return:
+    """
     for x in range(nun_of_cells):
         for y in range(nun_of_cells):
             cells[x][y] = 0
@@ -85,6 +117,11 @@ def clear_cells():
 
 
 def change_cell(event):
+    """
+    редактирование одной клетки
+    :param event:
+    :return:
+    """
     x, y = int(canvas.canvasx(event.x) // size_of_cell), int(canvas.canvasy(event.y) // size_of_cell)
     cells[x][y] = abs(cells[x][y] - 1)
     canvas.itemconfig(screen[x][y], fill=colors[cells[x][y]])
@@ -93,7 +130,11 @@ def change_cell(event):
 # repaint_all()
 
 
-def init_screen():
+def init_life_game():
+    """
+    Начальная инициализация игры
+    :return:
+    """
     global root, canvas, screen, cells
     root = Tk()
     panel_frame = Frame(root, height=40, bg='gray')
@@ -136,5 +177,5 @@ def init_screen():
 
 
 if __name__ == '__main__':
-    init_screen()
+    init_life_game()
     root.mainloop()
