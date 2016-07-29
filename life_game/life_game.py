@@ -2,7 +2,7 @@
 #
 #  Life Game
 #  
-#  Copyright 2016 Ivan Gryzov <ivan@Hivan_gryzov@mail.ru>
+#  Copyright 2016 Ivan Gryzov <ivan_gryzov@mail.ru>
 #  
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ import pickle
 colors = ["lightblue", "black"]
 nun_of_cells = 100
 size_of_cell = 20
-
+neighbors=[(-1,-1),(0,-1),(1,-1),(-1,0),(1,0),(-1,1),(0,1),(1,1)]
 
 def quit_apps():
     """
@@ -76,7 +76,25 @@ def play_step():
     Выподняет один шаг игры
     :return:
     """
-    pass
+    global cells
+
+    new_cells=cells.copy()
+    for x0 in range(nun_of_cells):
+        for y0 in range(nun_of_cells):
+            summa = 0
+            for dx, dy in neighbors:
+                x = (x0 + dx + nun_of_cells) % nun_of_cells
+                y = (y0 + dy + nun_of_cells) % nun_of_cells
+                summa += cells[x][y]
+            print(x0,y0,summa)
+            if cells[x0][y0]==0 and summa==3:
+                new_cells[x0][y0] = 1
+            elif cells[x0][y0]==1 and summa in [2,3]:
+                new_cells[x0][y0] = 1
+            else:
+                new_cells[x0][y0] = 0
+    cells=new_cells
+    repaint_all()
 
 
 def play():
